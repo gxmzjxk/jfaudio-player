@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,maximum-scale=1.0,user-scalable=no,minimal-ui">
+    <title> 单音频 </title>
+    <style>
+        body {
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        #JFAudioPlayerContainer button {
+            width: 20%;
+            height: 50px;
+        }
+    </style>
+</head>
+<body>
+<audio src="mp3/63.mp3" id="single-audio"></audio>
+<script src="../lib/jfutil.min.js"></script>
+<script src="../lib/jfaudio-player.min.js"></script>
+<script>
+    var Index = {
+        initJFcontrol: function (audio) {//初始化播放控制按钮
+            var helper = function (dom) {
+                return function () {
+                    dom.addEventListener('click', function (e) {
+                        var data = JFUtil.data(dom, 'JFcontrol');
+                        switch (data) {
+                            case 'start':
+                                audio.start();
+                                break;
+                            case 'stop':
+                                audio.stop();
+                                break;
+                            case 'restart':
+                                audio.restart();
+                                break;
+                            case 'pause':
+                                audio.pause();
+                                break;
+                            default:
+                                break;
+                        }
+                    }, false);
+                };
+
+            };
+            var buttonList = document.getElementsByName('JFcontrol');
+            for (var i = 0, len = buttonList.length; i < len; i++) {
+                var domFunc = helper(buttonList[i]);
+                domFunc();
+            }
+        }
+    };
+
+    JFUtil.ready(function () {
+        var single = document.getElementById('single-audio');
+
+        var audio = new JFAudioPlayer({
+            'autoplay': false,//默认值
+//            'src': './mp3/63.mp3',
+            'source' : single
+        });
+        Index.initJFcontrol(audio);
+        window.jAudio = audio;
+    });
+</script>
+</body>
+</html>
