@@ -17,9 +17,9 @@
     </style>
 </head>
 <body>
-<audio src="mp3/63.mp3" id="single-audio"></audio>
-<script src="../lib/jfutil.min.js"></script>
-<script src="../lib/jfaudio-player.js"></script>
+<audio src="./examples/mp3/63.mp3" id="single-audio"></audio>
+<script src="./lib/jfutil.min.js"></script>
+<script src="./lib/jfaudio-player.js"></script>
 <script>
     var Index = {
         initJFcontrol: function (audio) {//初始化播放控制按钮
@@ -59,7 +59,7 @@
         var single = document.getElementById('single-audio');
 
         var audio = new JFAudioPlayer({
-            'autoplay': false,//默认值
+            'autoplay': true,//默认值
 //            'src': './mp3/63.mp3',
             'source' : single
         });
