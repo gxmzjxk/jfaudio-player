@@ -136,6 +136,7 @@ h1, h2, h3, h4, h5, h6, i, cite, em {
 .radio_container > h2 {
     position: relative;
     font-size: 1.31579rem;
+    min-height: 1.71053rem;
     margin-top: 2.28947rem;
     margin-bottom: 1.63158rem;
     color: #FCFCF2;
@@ -272,8 +273,7 @@ h1, h2, h3, h4, h5, h6, i, cite, em {
     animation: rotateZ_run 18s linear infinite;
     -webkit-animation: rotateZ_run 18s linear infinite;
 }
-
-.toggleMusic {
+.more_rotate_run.toggleMusic {
     animation-play-state: paused !important;
     -webkit-animation-play-state: paused !important;
 }

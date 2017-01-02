@@ -4,40 +4,45 @@
     <meta charset="UTF-8">
     <title> 音乐播放器(单音频) </title>
     <meta name="viewport" content="width=device-width,maximum-scale=1.0,user-scalable=no,minimal-ui">
-    <!--<link rel="stylesheet" type="text/css" href="css/jf-audio.css"/>-->
+    <link rel="stylesheet" type="text/css" href="css/jf-audio.css"/>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            user-select: none;
-            -webkit-user-select: none;
-        }
-
-        #JFControlArea button {
-            width: 20%;
-            height: 50px;
-        }
-        #debugArea{
-            min-height: 400px;
-            background-color: aliceblue;
+        #debugArea {
+            position: absolute;
+            box-sizing: border-box;
+            width: 100%;
+            min-height: 200px;
+            background-color: rgba(6, 6, 6, 0.3);
         }
     </style>
 </head>
 <body>
-<div id="myDiyContainer">
-    <audio src="./mp3/teddybear.mp3" data-src="./mp3/teddybear.mp3" id="testModel"></audio>
+<div class="resource_container" id="resourceContainer">
+    <div class="radio_container">
+        <h2></h2>
+        <div class="play_cover more_rotate_run toggleMusic" id="audioPlayCover"
+             style="background: url('./css/images/cover1.jpg') no-repeat center center;background-size: cover;">
+            <article>
+
+            </article>
+        </div>
+        <section class="play_progress">
+            <cite class="start_time">0:00</cite>
+            <i class="progress_icon" style="width: 50.8235px;"></i>
+            <div class="progress_line"></div>
+            <em class="end_time">0:00</em>
+        </section>
+        <footer class="radio_play_control">
+            <audio src='' preload="auto"
+                   autoplay="autoplay"></audio>
+            <header class="play_button">
+                <div id="play_state" class="play2" data-action="toggleAudioPlay"></div>
+            </header>
+        </footer>
+    </div>
 </div>
-<div id="JFControlArea">
-    <button id="startAudio" data-action="start">start</button>
-    <button id="pauseAudio" data-action="pause">pause</button>
-    <button id="stopAudio" data-action="stop">stop</button>
-    <button id="restartAudio" data-action="restart">restart</button>
-</div>
+<div id="debugArea"></div>
 <script src="client.js"></script>
-<script src="jfutil.min.js"></script>
+<script src="jfutil.js"></script>
 <script src="jf-audio.js"></script>
 <script>
 

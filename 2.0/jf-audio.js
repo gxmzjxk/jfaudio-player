@@ -1,11 +1,11 @@
 const jLog = function (data, _infoTag) {
-    console.info("日志信息：");
     var infoTag = _infoTag || 'tag：';
     var area = document.querySelector('#debugArea');
     if (!area) {
         area = document.createElement('div');
         area.id = 'debugArea';
-        document.body.appendChild(area);
+        _$('#resourceContainer').appendChild(area);
+        // document.body.appendChild(area);
     }
     var html = "<section>" + infoTag + "|time:" + new Date().getTime() + "：" + JSON.stringify(data) + "</section>";
     area.insertAdjacentHTML('beforeEnd', html);
@@ -13,6 +13,7 @@ const jLog = function (data, _infoTag) {
 const _$ = function (selector) {
     return document.querySelector(selector);
 };
+window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 /**
  *
  * @param _options
@@ -89,9 +90,6 @@ JFAudio.prototype.init = function (options) {
         throw new Error("Please check your params");
     }
 };
-JFAudio.prototype.$update = function () {
-
-};
 JFAudio.prototype.start = function () {
     // var str = "andoid_weixin:" + (uPlat === 'android_weixin').valueOf();
     this.source.play();
@@ -118,7 +116,7 @@ JFAudio.prototype.getCurrentTime = function () {
  */
 var JFAudioListener = function (jfAudio) {
     this.target = jfAudio;
-    var model = jfAudio;
+    var $audio = jfAudio;
     //在new JFAudio 的时候配置的回调
     var _audioConfigCal = function (cal) {
         if (typeof cal === 'function') {
@@ -127,16 +125,16 @@ var JFAudioListener = function (jfAudio) {
     };
     //是否添加 touch 的hack，只针对 autoplay 为 TRUE 有效
     var _fakeAutoplayHack = function () {
-        var _config = model.config;
+        var _config = $audio.config;
         var _hackTimer;
         var _touchListener = function () {
-            model.start();
+            $audio.start();
             clearTimeout(_hackTimer);
             document.removeEventListener('touchstart', _touchListener, false);
         };
         var _autoPlayHackFunc = function () {
             _hackTimer = setTimeout(function () {
-                if (!model.status.playing) {
+                if (!$audio.status.playing) {
                     document.addEventListener('touchstart', _touchListener, false);
                 }
             }, 500);
@@ -149,8 +147,8 @@ var JFAudioListener = function (jfAudio) {
 
     var _updateStatusHelper = function (e) {
         var eType = e.type;
-        var _audioStatus = model.status;
-        var audioConfig = model.config;
+        var _audioStatus = $audio.status;
+        var audioConfig = $audio.config;
         _audioStatus[eType] = true;
         if (eType === 'ended') {
             _audioStatus.pause = true;
@@ -158,25 +156,27 @@ var JFAudioListener = function (jfAudio) {
             _audioConfigCal(audioConfig.ended);
 
         }
-        if (eType === 'palying') {
+        if (eType === 'pause') {
+            _audioStatus.playing = false;
+        }
+        if (eType === 'playing') {
             _audioStatus.ended = false;
             _audioStatus.pause = false;
         }
         if (eType === 'canplay') {
-            model.duration = model.source.duration;//填上音频时长
+            $audio.duration = $audio.source.duration;//填上音频时长
             _audioConfigCal(audioConfig.canplay);//已经可以播放
-            if (!model.initialed) {//初始化完成
+            if (!$audio.initialed) {//初始化完成
                 _audioConfigCal(audioConfig.initialed);
-                model.initialed = true;
+                $audio.initialed = true;
             }
-
-
         }
     };
     this.init = function () {
         var _source = this.target.source;
         if (typeof _source !== 'undefined') {
             _source.addEventListener('playing', _updateStatusHelper, false);
+            _source.addEventListener('pause', _updateStatusHelper, false);
             _source.addEventListener('ended', _updateStatusHelper, false);
             _source.addEventListener('canplay', _updateStatusHelper, false);
             _source.addEventListener('emptied', _updateStatusHelper, false);
@@ -193,14 +193,84 @@ var JFAudioListener = function (jfAudio) {
  * @desc    观察者2：监听jfAudio 实际状态的变化，做相应的展示
  */
 var JFAudioView = function (_jfAudio, _info) {
-    this.audio = _jfAudio || {};
-    this.info = _info || {};
+    var $audio = _jfAudio || {};
+    var $info = _info || {};
+    var self = this;
+    var buildView = function () {
+        var template = `<div class="resource_container" id="resourceContainer">
+                        <div class="radio_container">
+                            <h2></h2>
+                            <div class="play_cover more_rotate_run toggleMusic"
+                                 style="background: url('./css/images/cover1.jpg') no-repeat center center;background-size: cover;">
+                                <article>
+                    
+                                </article>
+                            </div>
+                            <section class="play_progress">
+                                <cite class="start_time">0:00</cite>
+                                <i class="progress_icon" style="width: 50.8235px;"></i>
+                                <div class="progress_line"></div>
+                                <em class="end_time">0:00</em>
+                            </section>
+                            <footer class="radio_play_control">
+                                <audio src='' preload="auto"
+                                       autoplay="autoplay"></audio>
+                                <header class="play_button">
+                                    <div id="play_state" class="play2" data-action="toggleAudioPlay"></div>
+                                </header>
+                            </footer>
+                        </div>
+                    </div>`;
 
-    this.buildView();
+        var _initView = function () {
+            if (!_$('#resourceContainer')) {
+                document.body.insertAdjacentHTML('afterbegin', template);
+            }
+
+            JFUtil.ready(function () {
+                JFUtil.addHandler(_$("#resourceContainer"), 'click', function (e) {
+                    var _target = e.target || e.srcElement;
+                    var action = JFUtil.data(_target, 'action');
+                    if (action === 'toggleAudioPlay') {
+                        if ($audio.status.playing) {
+                            $audio.pause();
+                        } else {
+                            $audio.start();
+                        }
+                        self.$updateView($audio);
+                        //
+                    }
+                }, false);
+            })
+        };
+        _initView();
+        var _audioPlayerInter = setInterval(function () {
+            if($audio.status.playing){
+                console.log($audio);
+            }
+        },500);
+    };
+    //一些初始化操作
+    buildView();
+
 };
-JFAudioView.prototype.buildView = function () {
-    var _initView = function () {
-
+JFAudioView.prototype.$updateView = function (_jfAudio) {
+    var model = _jfAudio;
+    if (model.status.playing) {
+        try {
+            _$('#play_state').setAttribute('class', 'play2');
+            JFUtil.addClass(_$('#audioPlayCover'), 'toggleMusic');
+            jLog(_$('.play_cover'),"262");
+        } catch (e) {
+            console.warn(e);
+        }
+    } else {
+        try {
+            _$('#play_state').setAttribute('class', 'pause2');
+            JFUtil.removeClass(_$('#audioPlayCover'), 'toggleMusic');
+        } catch (e) {
+            console.warn(e);
+        }
     }
 };
 JFUtil.ready(function () {
@@ -210,9 +280,9 @@ JFUtil.ready(function () {
         src: './mp3/63.mp3',
         fatherContainer: '#myDiyContainer',
         config: {
-            autoplay: true,
+            autoplay: false,
             loop: false,
-            hack: true,
+            hack: false,
             initialed: function () {
                 //初始化完成时执行的操作，只会触发一次
                 jLog("初始化完成", "171");
@@ -228,17 +298,17 @@ JFUtil.ready(function () {
     });
     var listener = new JFAudioListener(audio1);
     var audioInfo = {
-        img : 'http://cdn2.primedu.cn/se/62e0f9ad41ca1340c622696a1c1e1b76',
-        title : 'My Aunt Came Back',
-        src : 'http://cdn2.primedu.cn/se/16d679b358f3e900cd6b73aab5fd1d04.mp3',
+        img: 'http://cdn2.primedu.cn/se/62e0f9ad41ca1340c622696a1c1e1b76',
+        title: 'My Aunt Came Back',
+        src: 'http://cdn2.primedu.cn/se/16d679b358f3e900cd6b73aab5fd1d04.mp3',
     };
     var jfAudioView = new JFAudioView(audio1, audioInfo);
 
-    JFUtil.addHandler(_$("#JFControlArea"), "click", function (e) {
-        var _target = e.target || e.srcElement;
-        var action = JFUtil.data(_target, 'action');
-        audio1[action]();
-    }, false);
+    // JFUtil.addHandler(_$("#JFControlArea"), "click", function (e) {
+    //     var _target = e.target || e.srcElement;
+    //     var action = JFUtil.data(_target, 'action');
+    //     audio1[action]();
+    // }, false);
 
     // var count = 0;bakTag
     // var testInter = setInterval(function () {
