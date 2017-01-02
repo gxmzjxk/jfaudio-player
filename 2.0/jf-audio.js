@@ -82,11 +82,8 @@ var JFAudioPlayer = (function () {
         var initAudioByConfig = function (options) {
             var config = options.config || {};
             var _source = document.createElement('audio');
-            var autoplay = true;
             var loop = false;
-            if (typeof config.autoplay !== 'undefined' && config.autoplay === false) {
-                autoplay = false;
-            }
+
             if (typeof config.loop !== 'undefined' && config.loop === true) {
                 loop = true;
             }
@@ -95,9 +92,6 @@ var JFAudioPlayer = (function () {
             _source.src = options.src;
             _source.type = 'audio/mpeg';
             //
-            if (autoplay) {
-                _source.setAttribute('autoplay', 'autoplay');
-            }
             if (loop) {
                 _source.setAttribute('loop', 'loop');
             }
@@ -122,9 +116,10 @@ var JFAudioPlayer = (function () {
      * @constructor
      * @desc    观察者1：观察和监听jfAudio的状态的变化，并更新 JFAudio
      */
-    var JFAudioListener = function (jfAudio) {
-        this.target = jfAudio;
-        var $audio = jfAudio;
+    var JFAudioListener = function (_jfAudio, _jfView) {
+        this.target = _jfAudio;
+        var $audio = _jfAudio;
+        var $view = _jfView;
         //在new JFAudio 的时候配置的回调
         var _audioConfigCal = function (cal) {
             if (typeof cal === 'function') {
@@ -135,10 +130,18 @@ var JFAudioPlayer = (function () {
         var _fakeAutoplayHack = function () {
             var _config = $audio.config;
             var _hackTimer;
-            var _touchListener = function () {
-                $audio.start();
-                clearTimeout(_hackTimer);
-                document.removeEventListener('touchstart', _touchListener, false);
+            var _touchListener = function (e) {
+                if (e.target && e.target.id && e.target.id === 'play_state') {
+                    //如果点击的是播放按钮，让其触发默认的播放事件即可
+                    clearTimeout(_hackTimer);
+                    document.removeEventListener('touchstart', _touchListener, false);
+                } else {
+                    $audio.start();
+                    $view.$updateView($audio);
+                    clearTimeout(_hackTimer);
+                    document.removeEventListener('touchstart', _touchListener, false);
+                }
+
             };
             var _autoPlayHackFunc = function () {
                 _hackTimer = setTimeout(function () {
@@ -147,8 +150,14 @@ var JFAudioPlayer = (function () {
                     }
                 }, 500);
             };
-            if (_config.autoplay && _config.hack) {
-                _autoPlayHackFunc();
+            if (_config.autoplay) {
+                //兼容处理 polyfill
+                if ((client.browser.chrome > 0 || client.browser.firefox > 0) && plat !== 'android') {
+                    $audio.start();
+                    $view.$updateView($audio);
+                } else {
+                    _autoPlayHackFunc();
+                }
             }
         };
 
@@ -162,13 +171,11 @@ var JFAudioPlayer = (function () {
                 _audioStatus.pause = true;
                 _audioStatus.playing = false;
                 _audioConfigCal(audioConfig.ended);
-
             }
             if (eType === 'pause') {
                 _audioStatus.playing = false;
             }
             if (eType === 'playing') {
-                _audioStatus.ended = false;
                 _audioStatus.pause = false;
             }
             if (eType === 'canplay') {
@@ -206,6 +213,7 @@ var JFAudioPlayer = (function () {
         var self = this;
         var buildView = function () {
             var template = '';
+            var _audioPlayerInter = null;
             var _initView = function () {
                 if (!_$('#resourceContainer')) {
                     document.body.insertAdjacentHTML('afterbegin', template);
@@ -223,16 +231,47 @@ var JFAudioPlayer = (function () {
                             }
                             self.$updateView($audio);
                             //
+                            _audioPlayerInter = setInterval(function () {
+                                //更新进度条
+                                _initProgress();
+                                console.log($audio.status);
+                                if ($audio.status.ended) {
+                                    self.$updateView($audio);
+                                    clearInterval(_audioPlayerInter);
+                                }
+                            }, 500);
+
                         }
                     }, false);
                 })
             };
             _initView();
-            var _audioPlayerInter = setInterval(function () {
-                if ($audio.status.playing) {
-                    console.log($audio);
+            //更新进度条和时间信息
+            var _initProgress = function () {
+                var intDuration = $audio.duration;
+                var strDuration = JFUtil.calAudioTime(intDuration);
+                var currentTime = $audio.getCurrentTime();
+                _$('.end_time').innerHTML = strDuration;
+                //
+                var strTime = JFUtil.calAudioTime(currentTime);
+                _$('.start_time').innerHTML = strTime;
+                //更改进度条长度
+                var progressWidth = JFUtil.getRectBoxObj(_$('.progress_line')).width;
+                var widthline = Math.round(currentTime) / Math.round(intDuration) * progressWidth;
+                var pastime = _$('.progress_icon');
+                pastime.style.width = widthline + "px";
+            };
+            //
+            _audioPlayerInter = setInterval(function () {
+                //更新进度条
+                _initProgress();
+                console.log($audio.status);
+                if ($audio.status.ended) {
+                    self.$updateView($audio);
+                    clearInterval(_audioPlayerInter);
                 }
             }, 500);
+
         };
         //一些初始化操作
         buildView();
@@ -249,6 +288,7 @@ var JFAudioPlayer = (function () {
                 console.warn(e);
             }
         } else {
+            console.log("准备进行暂停样式");
             try {
                 _$('#play_state').setAttribute('class', 'pause2');
                 JFUtil.removeClass(_$('#audioPlayCover'), 'toggleMusic');
@@ -262,31 +302,34 @@ var JFAudioPlayer = (function () {
      * @desc  管理一批音频
      * @constructor
      */
-    var JFAudioListListener = function () {
+    var JFAudioBatchListener = function () {
         this.audioList = [];
     };
-    //播放到最后一个
-    JFAudioListListener.prototype.playToLast = function () {
+    JFAudioBatchListener.prototype = {
+        //播放到最后一个
+        playToLast: function () {
 
-    };
-    //播放指定的音频
-    JFAudioListListener.prototype.playSingle = function () {
+        },
+        //播放指定的音频
+        playSingle: function () {
 
-    };
-    //停止所有
-    JFAudioListListener.prototype.stopAll = function () {
+        },
+        //停止所有
+        stopAll: function () {
 
-    };
-    //播放下一个
-    JFAudioListListener.prototype.next = function () {
+        },
+        //播放下一个
+        next: function () {
+
+        },
 
     };
 
     return {
         initSingle: function (options) {
             var audio = new JFAudio(options);
-            var listener = new JFAudioListener(audio);
             var view = new JFAudioView(audio);
+            var listener = new JFAudioListener(audio, view);
             return {
                 audio: audio,
                 listener: listener,
@@ -304,21 +347,23 @@ var JFAudioPlayer = (function () {
 
 
 JFUtil.ready(function () {
+    jLog(client, "331");
+    jLog(uPlat, "332");
+    jLog(plat, "333");
     var player = JFAudioPlayer.initSingle({
-        src: './mp3/63.mp3',
+        src: './mp3/teddybear.mp3',
         fatherContainer: '#myDiyContainer',
         info: {
             img: 'http://cdn2.primedu.cn/se/62e0f9ad41ca1340c622696a1c1e1b76',
             title: 'My Aunt Came Back',
         },
         config: {
-            autoplay: false,
+            autoplay: true,
             loop: false,
-            hack: false,
+            hack: true,
             initialed: function () {
                 //初始化完成时执行的操作，只会触发一次
-                jLog("初始化完成", "171");
-                // audio1.start();
+                jLog("初始化完成", "320");
             },
             canplay: function () {
                 console.log("可以开始播放了");

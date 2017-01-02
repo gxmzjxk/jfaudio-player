@@ -236,5 +236,8 @@ if(ua.indexOf("applewebkit") != -1){
 //获取uuid
 !function(){
     var uid_arr = ua.split('/');
-    uuid = uid_arr[4].substr(0,6);
+    if(uid_arr[4]){
+        uuid = uid_arr[4].substr(0,6);
+    }
+
 }();

@@ -333,5 +333,20 @@ var JFUtil = {
             cal();
         }
     },
+    calAudioTime: function (time, $needObj) {
+        var hour = parseInt(time / 3600) > 0 ? parseInt(time / 3600) + ':' : '';
+        var minute = parseInt((time - 3600 * hour) / 60);
+        var intSecond = parseInt(time - 3600 * hour - 60 * minute);
+        var second = intSecond < 10 ? '0' + intSecond : intSecond;
+        if ($needObj) {
+            return {
+                hour: hour,
+                minute: minute,
+                second: second
+            };
+        } else {
+            return hour + minute + ':' + second;
+        }
+    }
 
 };
