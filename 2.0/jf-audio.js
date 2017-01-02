@@ -197,31 +197,7 @@ var JFAudioView = function (_jfAudio, _info) {
     var $info = _info || {};
     var self = this;
     var buildView = function () {
-        var template = `<div class="resource_container" id="resourceContainer">
-                        <div class="radio_container">
-                            <h2></h2>
-                            <div class="play_cover more_rotate_run toggleMusic"
-                                 style="background: url('./css/images/cover1.jpg') no-repeat center center;background-size: cover;">
-                                <article>
-                    
-                                </article>
-                            </div>
-                            <section class="play_progress">
-                                <cite class="start_time">0:00</cite>
-                                <i class="progress_icon" style="width: 50.8235px;"></i>
-                                <div class="progress_line"></div>
-                                <em class="end_time">0:00</em>
-                            </section>
-                            <footer class="radio_play_control">
-                                <audio src='' preload="auto"
-                                       autoplay="autoplay"></audio>
-                                <header class="play_button">
-                                    <div id="play_state" class="play2" data-action="toggleAudioPlay"></div>
-                                </header>
-                            </footer>
-                        </div>
-                    </div>`;
-
+        var template = '';
         var _initView = function () {
             if (!_$('#resourceContainer')) {
                 document.body.insertAdjacentHTML('afterbegin', template);
@@ -245,10 +221,10 @@ var JFAudioView = function (_jfAudio, _info) {
         };
         _initView();
         var _audioPlayerInter = setInterval(function () {
-            if($audio.status.playing){
+            if ($audio.status.playing) {
                 console.log($audio);
             }
-        },500);
+        }, 500);
     };
     //一些初始化操作
     buildView();
@@ -260,7 +236,7 @@ JFAudioView.prototype.$updateView = function (_jfAudio) {
         try {
             _$('#play_state').setAttribute('class', 'play2');
             JFUtil.addClass(_$('#audioPlayCover'), 'toggleMusic');
-            jLog(_$('.play_cover'),"262");
+            jLog(_$('#audioPlayCover').getAttribute('class'), "262");
         } catch (e) {
             console.warn(e);
         }
@@ -273,12 +249,34 @@ JFAudioView.prototype.$updateView = function (_jfAudio) {
         }
     }
 };
+
+/**
+ * @desc 播放器，调用入口 JFAudioPlayer.init({config});
+ * @type {{init}}
+ */
+var JFAudioPlayer = (function () {
+    return {
+        init: function (options) {
+            var audio = new JFAudio(options);
+            var listener = new JFAudioListener(audio);
+            var view = new JFAudioView(audio);
+            return {
+                audio: audio,
+                listener: listener,
+                view: view
+            }
+        }
+    }
+})();
+
 JFUtil.ready(function () {
-    var model = document.querySelector('#testModel');
-    var audio1 = new JFAudio({
-        // src: './mp3/lovesong.wav',
+    var player = JFAudioPlayer.init({
         src: './mp3/63.mp3',
         fatherContainer: '#myDiyContainer',
+        info: {
+            img: 'http://cdn2.primedu.cn/se/62e0f9ad41ca1340c622696a1c1e1b76',
+            title: 'My Aunt Came Back',
+        },
         config: {
             autoplay: false,
             loop: false,
@@ -296,27 +294,4 @@ JFUtil.ready(function () {
             }
         },
     });
-    var listener = new JFAudioListener(audio1);
-    var audioInfo = {
-        img: 'http://cdn2.primedu.cn/se/62e0f9ad41ca1340c622696a1c1e1b76',
-        title: 'My Aunt Came Back',
-        src: 'http://cdn2.primedu.cn/se/16d679b358f3e900cd6b73aab5fd1d04.mp3',
-    };
-    var jfAudioView = new JFAudioView(audio1, audioInfo);
-
-    // JFUtil.addHandler(_$("#JFControlArea"), "click", function (e) {
-    //     var _target = e.target || e.srcElement;
-    //     var action = JFUtil.data(_target, 'action');
-    //     audio1[action]();
-    // }, false);
-
-    // var count = 0;bakTag
-    // var testInter = setInterval(function () {
-    //     if (audio1.status.ended || count > 10) {
-    //         clearInterval(testInter);
-    //     }
-    //     console.log(audio1);
-    //     console.log(audio1.getCurrentTime());
-    //     count++;
-    // }, 200);
 });
