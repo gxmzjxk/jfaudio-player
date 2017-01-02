@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta id="centerViewpoint" name="viewport"
+          content="width=device-width,maximum-scale=1.0,user-scalable=no,minimal-ui">
+    <title>资海量资源</title>
+    <link rel="stylesheet" type="text/css" href="css/common.css"/>
+    <link rel="stylesheet" type="text/css" href="css/resource.css"/>
+    <link rel="stylesheet" type="text/css" href="css/animate.css"/>
+    <link rel="stylesheet" type="text/css" href="css/swiper.min.css"/>
+    <!--<script>-->
+    <!--!function(){-->
+    <!--var centerViewpoint = document.querySelector("#centerViewpoint");-->
+    <!--var DeviceWidth = window.screen.availWidth;//先获取设备可用宽度-->
+    <!--var standardWidth = 375;//iPhone6/6S作为标准尺寸-->
+    <!--var scaling = (DeviceWidth/standardWidth).toFixed(3);-->
+    <!--var viewpointVal = "width=device-width,maximum-scale="+scaling+",user-scalable=no,minimal-ui";-->
+    <!--centerViewpoint.setAttribute('content',viewpointVal);-->
+    <!--}();-->
+    <!--</script>-->
+</head>
+<body>
+<div class="resource_container">
+    <!-- 乐迪电台 -->
+    <div class="radio_container">
+        <h2>Home on the Rang</h2>
+        <div class="play_cover more_rotate_run">
+            <article>
+
+            </article>
+        </div>
+        <section class="play_progress">
+            <cite class="start_time"></cite>
+            <i class="progress_icon"></i>
+            <div class="progress_line"></div>
+            <em class="end_time"></em>
+        </section>
+        <footer class="play_control">
+            <audio src="mp3/unit13_song.mp3" preload="auto" autoplay="autoplay"></audio>
+            <header class="play_button">
+                <div id="play_state" class="pause"></div>
+            </header>
+        </footer>
+    </div>
+    <!-- 飞侠语录 -->
+    <div class="quotation_container">
+        <header></header>
+        <h2>Jett to control room Package pick up</h2>
+        <h3>乐迪到控制室报到，有包裹需要你送达</h3>
+        <footer class="play_control">
+            <header>
+                <div></div>
+            </header>
+
+            <section class="switch_left">
+                <div></div>
+            </section>
+            <footer class="switch_right">
+                <div></div>
+            </footer>
+        </footer>
+    </div>
+    <!-- 单词闪卡 -->
+    <div class="word_container">
+        <section id="slide_container_word" class="swiper-container swiper-container-horizontal">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide slide-1">
+                    <header style="background: url('images/ears.png') no-repeat center center;background-size: contain;">
+                        <audio src="" preload="auto"></audio>
+                    </header>
+                    <h2>ears</h2>
+                    <h3>耳朵</h3>
+                </div>
+                <div class="swiper-slide slide-2">
+                    <header style="background: url('images/face.png') no-repeat center center;background-size: contain;">
+                        <audio src="mp3/kite.mp3" preload="auto"></audio>
+                    </header>
+                    <h2>face</h2>
+                    <h3>脸颊</h3>
+                </div>
+
+                <div class="swiper-slide slide-3">
+                    <header style="background: url('images/nose.png') no-repeat center center;background-size: contain;">
+                        <audio src="mp3/doll.mp3" preload="auto"></audio>
+                    </header>
+                    <h2>nose</h2>
+                    <h3>鼻子</h3>
+                </div>
+            </div>
+        </section>
+        <footer class="play_control">
+            <header class="switch_paly">
+                <div></div>
+            </header>
+
+            <section class="switch_left">
+                <div></div>
+            </section>
+            <footer class=" switch_right">
+                <div></div>
+            </footer>
+        </footer>
+    </div>
+</div>
+<div class="mask_download_dialog">
+    <article class="mask_download_content">
+        <div class="close_dialog_btn"></div>
+        <img class="dialog_bg" src="images/img_share_popupBg.png"/>
+        <section class="dialog_desc">更多单词闪卡内容，请下载超级飞侠ABC APP哦！</section>
+        <footer class="link_btn">立即下载</footer>
+    </article>
+</div>
+<!--<img src="images/download_banner.png" class="fixed_bottom_bar_img" id="fixed_bottom_bar"/>-->
+
+<script src="js/swiper.min.js"></script>
+<script src="js/zepto.min.js"></script>
+<script src="js/client.js"></script>
+<script src="js/Util.js"></script>
+<script src="js/resource.js"></script>
+</body>
+</html>
