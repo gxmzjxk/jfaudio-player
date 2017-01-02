@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="viewport" content="width=device-width,maximum-scale=1.0,user-scalable=no,minimal-ui">
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        #JFAudioPlayerContainer button {
+            width: 20%;
+            height: 50px;
+        }
+        #debugArea{
+            background-color: aliceblue;
+            min-height: 400px;
+            word-break: break-all;
+        }
+        #debugArea > section{
+            margin-bottom: 5px;
+            background-color: silver;
+        }
+        #userClickPlay{
+            height: 50px;
+        }
+    </style>
+</head>
+<body>
+<button id="userClickPlay">点击我手动播放</button>
+<div id="debugArea"></div>
+<!--<audio src="./mp3/ball.mp3" preload="auto" id="test-audio"></audio>-->
+<script src="jfutil.min.js"></script>
+<script src="jfaudio-factory.js"></script>
+</body>
+</html>
