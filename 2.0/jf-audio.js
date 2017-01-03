@@ -154,10 +154,9 @@ var JFAudioPlayer = (function () {
                 //兼容处理 polyfill
                 if ((client.browser.chrome > 0 || client.browser.firefox > 0) && plat !== 'android') {
                     $audio.start();
-                } else if(uPlat === 'android_weixin'){
+                } else if (uPlat === 'android_weixin') {
                     $audio.start();
-                }else
-                    {
+                } else {
                     _autoPlayHackFunc();
                 }
             }
@@ -213,6 +212,14 @@ var JFAudioPlayer = (function () {
         var $audio = _jfAudio || {};
         var $info = _info || {};
         var self = this;
+        //
+        var buildAudioInfo = function () {
+            var dom_title = _$('.jfaudio-title');
+            // var dom_cover = _$('#audioPlayCover');
+            if (!dom_title.innerHTML) {
+                dom_title.innerHTML = $info.title;
+            }
+        };
         var buildView = function () {
             var template = '';
             var _audioPlayerInter = null;
@@ -250,7 +257,7 @@ var JFAudioPlayer = (function () {
             };
             _initView();
             //
-            if(!_audioPlayerInter){
+            if (!_audioPlayerInter) {
                 _audioPlayerInter = setInterval(function () {
                     //更新视图
                     self.$updateView($audio);
@@ -258,10 +265,9 @@ var JFAudioPlayer = (function () {
                     _initProgress();
                 }, 500);
             }
-
-
         };
         //一些初始化操作
+        buildAudioInfo();
         buildView();
 
     };
@@ -316,7 +322,7 @@ var JFAudioPlayer = (function () {
     return {
         initSingle: function (options) {
             var audio = new JFAudio(options);
-            var view = new JFAudioView(audio);
+            var view = new JFAudioView(audio, options.info);
             var listener = new JFAudioListener(audio, view);
             return {
                 audio: audio,
@@ -335,9 +341,6 @@ var JFAudioPlayer = (function () {
 
 
 JFUtil.ready(function () {
-    jLog(client, "331");
-    jLog(uPlat, "332");
-    jLog(plat, "333");
     var player = JFAudioPlayer.initSingle({
         src: './mp3/63.mp3',
         fatherContainer: '#myDiyContainer',
