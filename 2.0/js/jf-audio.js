@@ -1,4 +1,4 @@
-const jLog = function (data, _infoTag) {
+var jLog = function (data, _infoTag) {
     var infoTag = _infoTag || 'tag：';
     var area = document.querySelector('#debugArea');
     if (!area) {
@@ -10,7 +10,7 @@ const jLog = function (data, _infoTag) {
     var html = "<section>" + infoTag + "|time:" + new Date().getTime() + "：" + JSON.stringify(data) + "</section>";
     area.insertAdjacentHTML('beforeEnd', html);
 };
-const _$ = function (selector) {
+var _$ = function (selector) {
     return document.querySelector(selector);
 };
 window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
@@ -21,6 +21,7 @@ window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequest
  * @main    入口
  */
 var JFAudioPlayer = (function () {
+    'use strict';
     /**
      *
      * @param _options
@@ -331,41 +332,11 @@ var JFAudioPlayer = (function () {
                 audio: audio,
                 listener: listener,
                 view: view
-            }
+            };
         },
         initAudioList: function (options) {
             //需要添加新的观察者
         }
-    }
+    };
 })();
-
-
-//
-
-
-JFUtil.ready(function () {
-    var player = JFAudioPlayer.initSingle({
-        src: './mp3/63.mp3',
-        fatherContainer: '#myDiyContainer',
-        info: {
-            img: './css/images/cover1.jpg',
-            title: 'My Aunt Came Back',
-        },
-        config: {
-            autoplay: true,
-            loop: false,
-            hack: true,
-            initialed: function () {
-                //初始化完成时执行的操作，只会触发一次
-                jLog("初始化完成", "320");
-            },
-            canplay: function () {
-                console.log("可以开始播放了");
-            },
-            ended: function () {
-                console.log("播放结束了");
-            }
-        },
-    });
-});
 

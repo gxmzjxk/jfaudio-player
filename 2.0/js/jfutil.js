@@ -83,31 +83,37 @@ var JFUtil = {
     },
     removeClass: function (a, c) {
         if (a instanceof Node) {
-            var b = document.body.classList == undefined ? false : true;
+            var b = true;
+            if (typeof document.body.classList === 'undefined') {
+                b = false;
+            }
             if (b) {
-                a.classList.remove(c)
+                a.classList.remove(c);
             } else {
                 if (a && a instanceof Node) {
                     var e = " " + a.className + " ";
-                    a.className = e.replace(" " + c, "").replace(/^\s*/img, "").replace(/\s*$/img, "")
+                    a.className = e.replace(" " + c, "").replace(/^\s*/img, "").replace(/\s*$/img, "");
                 }
             }
         }
     },
     addClass: function (a, c) {
         if (a instanceof Node) {
-            var b = document.body.classList == undefined ? false : true;
+            var b = true;
+            if (typeof document.body.classList === 'undefined') {
+                b = false;
+            }
             if (b && a) {
-                a.classList.add(c)
+                a.classList.add(c);
             } else {
                 if (a && a instanceof Node) {
                     var e = a.className;
                     if (e) {
                         if ((" " + e + " ").indexOf(" " + c + " ") === -1) {
-                            a.className = e + " " + c
+                            a.className = e + " " + c;
                         }
                     } else {
-                        a.className = c
+                        a.className = c;
                     }
                 }
             }

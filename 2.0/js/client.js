@@ -14,20 +14,15 @@ var client = function(){
         opera: 0,
         ver: null  
     };
-    
     var browser = {
-        
         ie: 0,
         firefox: 0,
         safari: 0,
         konq: 0,
         opera: 0,
         chrome: 0,
-
         ver: null
     };
-
-    
     //platform/device/OS
     var system = {
         win: false,
@@ -168,10 +163,8 @@ var client = function(){
 var uPlat = false;
 var plat = false;
 var ua = navigator.userAgent.toLowerCase();
-var platform = navigator.platform.toLowerCase(); //android or linux
 var platV = false;
 var iphoneN = false;
-var uuid = false;//设备ID
 //初始化微信接口
 if(ua.indexOf("applewebkit") != -1){
 	if(client.system.iphone || client.system.ipad){
@@ -233,11 +226,3 @@ if(ua.indexOf("applewebkit") != -1){
 		}
 	}
 }
-//获取uuid
-!function(){
-    var uid_arr = ua.split('/');
-    if(uid_arr[4]){
-        uuid = uid_arr[4].substr(0,6);
-    }
-
-}();

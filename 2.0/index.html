@@ -42,11 +42,35 @@
     </div>
 </div>
 <div id="debugArea"></div>
-<script src="client.js"></script>
-<script src="jfutil.js"></script>
-<script src="jf-audio.js"></script>
+<script src="./js/client.js"></script>
+<script src="./js/jfutil.min.js"></script>
+<script src="./js/jf-audio.min.js"></script>
 <script>
-
+    JFUtil.ready(function () {
+        var player = JFAudioPlayer.initSingle({
+            src: './mp3/63.mp3',
+            fatherContainer: '#myDiyContainer',
+            info: {
+                img: './css/images/cover1.jpg',
+                title: 'My Aunt Came Back',
+            },
+            config: {
+                autoplay: true,
+                loop: false,
+                hack: true,
+                initialed: function () {
+                    //初始化完成时执行的操作，只会触发一次
+                    jLog("初始化完成", "320");
+                },
+                canplay: function () {
+                    console.log("可以开始播放了");
+                },
+                ended: function () {
+                    console.log("播放结束了");
+                }
+            },
+        });
+    });
 </script>
 </body>
 </html>
