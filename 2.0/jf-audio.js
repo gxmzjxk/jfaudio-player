@@ -154,8 +154,10 @@ var JFAudioPlayer = (function () {
                 //兼容处理 polyfill
                 if ((client.browser.chrome > 0 || client.browser.firefox > 0) && plat !== 'android') {
                     $audio.start();
-                    $view.$updateView($audio);
-                } else {
+                } else if(uPlat === 'android_weixin'){
+                    $audio.start();
+                }else
+                    {
                     _autoPlayHackFunc();
                 }
             }
@@ -214,38 +216,6 @@ var JFAudioPlayer = (function () {
         var buildView = function () {
             var template = '';
             var _audioPlayerInter = null;
-            var _initView = function () {
-                if (!_$('#resourceContainer')) {
-                    document.body.insertAdjacentHTML('afterbegin', template);
-                }
-
-                JFUtil.ready(function () {
-                    JFUtil.addHandler(_$("#resourceContainer"), 'click', function (e) {
-                        var _target = e.target || e.srcElement;
-                        var action = JFUtil.data(_target, 'action');
-                        if (action === 'toggleAudioPlay') {
-                            if ($audio.status.playing) {
-                                $audio.pause();
-                            } else {
-                                $audio.start();
-                            }
-                            self.$updateView($audio);
-                            //
-                            _audioPlayerInter = setInterval(function () {
-                                //更新进度条
-                                _initProgress();
-                                console.log($audio.status);
-                                if ($audio.status.ended) {
-                                    self.$updateView($audio);
-                                    clearInterval(_audioPlayerInter);
-                                }
-                            }, 500);
-
-                        }
-                    }, false);
-                })
-            };
-            _initView();
             //更新进度条和时间信息
             var _initProgress = function () {
                 var intDuration = $audio.duration;
@@ -257,20 +227,38 @@ var JFAudioPlayer = (function () {
                 _$('.start_time').innerHTML = strTime;
                 //更改进度条长度
                 var progressWidth = JFUtil.getRectBoxObj(_$('.progress_line')).width;
-                var widthline = Math.round(currentTime) / Math.round(intDuration) * progressWidth;
+                var widthline = Math.ceil(currentTime) / Math.ceil(intDuration) * progressWidth;
                 var pastime = _$('.progress_icon');
                 pastime.style.width = widthline + "px";
             };
-            //
-            _audioPlayerInter = setInterval(function () {
-                //更新进度条
-                _initProgress();
-                console.log($audio.status);
-                if ($audio.status.ended) {
-                    self.$updateView($audio);
-                    clearInterval(_audioPlayerInter);
+            var _initView = function () {
+                if (!_$('#resourceContainer')) {
+                    document.body.insertAdjacentHTML('afterbegin', template);
                 }
-            }, 500);
+                JFUtil.addHandler(_$("#resourceContainer"), 'click', function (e) {
+                    var _target = e.target || e.srcElement;
+                    var action = JFUtil.data(_target, 'action');
+                    if (action === 'toggleAudioPlay') {
+                        if ($audio.status.playing) {
+                            $audio.pause();
+                        } else {
+                            $audio.start();
+                        }
+                    }
+                }, false);
+
+            };
+            _initView();
+            //
+            if(!_audioPlayerInter){
+                _audioPlayerInter = setInterval(function () {
+                    //更新视图
+                    self.$updateView($audio);
+                    //更新进度条
+                    _initProgress();
+                }, 500);
+            }
+
 
         };
         //一些初始化操作
@@ -282,16 +270,16 @@ var JFAudioPlayer = (function () {
         if (model.status.playing) {
             try {
                 _$('#play_state').setAttribute('class', 'play2');
-                JFUtil.addClass(_$('#audioPlayCover'), 'toggleMusic');
-                jLog(_$('#audioPlayCover').getAttribute('class'), "262");
+                JFUtil.removeClass(_$('#audioPlayCover'), 'toggleMusic');
+                // jLog(_$('#audioPlayCover').getAttribute('class'), "262");
             } catch (e) {
                 console.warn(e);
             }
         } else {
-            console.log("准备进行暂停样式");
             try {
                 _$('#play_state').setAttribute('class', 'pause2');
-                JFUtil.removeClass(_$('#audioPlayCover'), 'toggleMusic');
+                JFUtil.addClass(_$('#audioPlayCover'), 'toggleMusic');
+
             } catch (e) {
                 console.warn(e);
             }
@@ -351,7 +339,7 @@ JFUtil.ready(function () {
     jLog(uPlat, "332");
     jLog(plat, "333");
     var player = JFAudioPlayer.initSingle({
-        src: './mp3/teddybear.mp3',
+        src: './mp3/63.mp3',
         fatherContainer: '#myDiyContainer',
         info: {
             img: 'http://cdn2.primedu.cn/se/62e0f9ad41ca1340c622696a1c1e1b76',

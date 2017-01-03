@@ -279,12 +279,12 @@ h1, h2, h3, h4, h5, h6, i, cite, em {
 }
 
 /**/
-.play2 {
+.pause2 {
     background: url(./images/btn_radio_play.png) no-repeat center center;
     background-size: contain;
 }
 
-.pause2 {
+.play2 {
     background: url(./images/btn_radio_pause.png) no-repeat center center;
     background-size: contain;
 }
