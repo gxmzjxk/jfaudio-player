@@ -215,9 +215,12 @@ var JFAudioPlayer = (function () {
         //
         var buildAudioInfo = function () {
             var dom_title = _$('.jfaudio-title');
-            // var dom_cover = _$('#audioPlayCover');
+            var dom_cover = _$('#audioPlayCover');
             if (!dom_title.innerHTML) {
                 dom_title.innerHTML = $info.title;
+            }
+            if (!dom_cover.getAttribute('src')) {
+                dom_cover.setAttribute('src', $info.img);
             }
         };
         var buildView = function () {
@@ -345,7 +348,7 @@ JFUtil.ready(function () {
         src: './mp3/63.mp3',
         fatherContainer: '#myDiyContainer',
         info: {
-            img: 'http://cdn2.primedu.cn/se/62e0f9ad41ca1340c622696a1c1e1b76',
+            img: './css/images/cover1.jpg',
             title: 'My Aunt Came Back',
         },
         config: {

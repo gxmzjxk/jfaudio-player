@@ -145,6 +145,7 @@ h1, h2, h3, h4, h5, h6, i, cite, em {
 
 .play_cover {
     position: relative;
+    display: block;
     width: 14.86842rem;
     height: 14.86842rem;
     margin: 0 auto;
@@ -153,7 +154,10 @@ h1, h2, h3, h4, h5, h6, i, cite, em {
     box-shadow: 0 0 0 0.26316rem rgba(66, 34, 24, .5);
 }
 
-.play_cover > article {
+.jfaudio-container__cover{
+    position: relative;
+}
+.jfaudio-container__cover--dot{
     position: absolute;
     width: 3.94737rem;
     height: 3.94737rem;
