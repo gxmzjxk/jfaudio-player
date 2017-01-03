@@ -16,7 +16,7 @@ var _$ = function (selector) {
 window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 
 /**
- * @desc 播放器，使用入口 JFAudioPlayer.init({config});
+ * @desc 播放器，使用入口 JFAudioPlayer.initSingle({config});
  * @type {{init}}
  * @main    入口
  */
